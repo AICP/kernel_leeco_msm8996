@@ -893,6 +893,8 @@ static int irq_thread(void *data)
 
 	irq_thread_check_affinity(desc, action);
 
+	irq_thread_check_affinity(desc, action);
+
 	while (!irq_wait_for_interrupt(action)) {
 		irqreturn_t action_ret;
 
