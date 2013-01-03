@@ -47,6 +47,7 @@ allowed_warnings = set([
     "pppopns.c:296",
     "pppopns.c:305",
     "pppopns.c:336",
+    "msm-pm.c:814",
  ])
 
 # Capture the name of the object file, can find it.

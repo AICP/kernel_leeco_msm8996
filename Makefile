@@ -295,7 +295,7 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
 	  else if [ -x /bin/bash ]; then echo /bin/bash; \
 	  else echo sh; fi ; fi)
 
-GRAPHITE = -fgraphite -fgraphite-identity -floop-interchange -ftree-loop-linear -floop-strip-mine -floop-block -floop-parallelize-all -floop-nest-optimize
+GRAPHITE = -fgraphite -fgraphite-identity -floop-interchange -ftree-loop-linear -floop-strip-mine -floop-block -floop-parallelize-all -floop-nest-optimize -floop-flatten -floop-unroll-and-jam
 
 HOSTCC       = $(CCACHE) gcc
 HOSTCXX      = $(CCACHE) g++
@@ -375,7 +375,7 @@ GCC_OPT		:=	-ffast-math \
 			-Wno-shift-overflow \
 		        -mcpu=cortex-a57 -mtune=cortex-a57 \
 			$(GRAPHITE)
-
+			#$(GRAPHITE)
 AS		= $(CROSS_COMPILE)as
 LD		= $(CROSS_COMPILE)ld.gold -O3 --strip-debug
 CC		= $(CCACHE) $(CROSS_COMPILE)gcc $(GCC_OPT)
@@ -398,11 +398,12 @@ CHECK		= sparse
 
 CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
 		  -Wbitwise -Wno-return-void $(CF)
-CFLAGS_MODULE   = -w
-AFLAGS_MODULE   = -w
+OPTS		= -mcpu=cortex-a57.cortex-a53 -mtune=cortex-a57.cortex-a53 -fopenmp -fmodulo-sched -fmodulo-sched-allow-regmoves -ftree-vectorize -ftree-loop-vectorize -ftree-loop-distribute-patterns -ftree-slp-vectorize -fvect-cost-model -ftree-partial-pre -fgcse-after-reload -fgcse-lm -fgcse-sm -fsched-spec-load -ffast-math -fsingle-precision-constant -fpredictive-commoning 
+CFLAGS_MODULE   = $(GRAPHITE) -w
+AFLAGS_MODULE   = $(GRAPHITE) -w
 LDFLAGS_MODULE  = $(GRAPHITE) --strip-debug
-CFLAGS_KERNEL	= -w
-AFLAGS_KERNEL	= -w
+CFLAGS_KERNEL	= $(GRAPHITE) -w -fsingle-precision-constant
+AFLAGS_KERNEL	= $(GRAPHITE) -w
 CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
 
 
@@ -425,12 +426,18 @@ LINUXINCLUDE    := \
 
 KBUILD_CPPFLAGS := -D__KERNEL__
 
-KBUILD_CFLAGS   := $(GRAPHITE) -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
-		   -fno-strict-aliasing -fno-common \
+KBUILD_CFLAGS   := $(GRAPHITE) -Wall -pipe -pthread -DNDEBUG -Wundef -Wstrict-prototypes -Wno-trigraphs \
+		   -fstrict-aliasing -fivopts -fipa-pta -fira-hoist-pressure -fno-common \
+                   -ftree-loop-distribution -ftree-loop-if-convert -fprefetch-loop-arrays \
+		   -ftree-vectorize\
 		   -Werror-implicit-function-declaration \
-		   -Wno-format-security \
+		   -Wno-format-security -funsafe-math-optimizations \
 		   -std=gnu89 \
-	           -mcpu=cortex-a57 -mtune=cortex-a57
+	           -mcpu=cortex-a57 -mtune=cortex-a57 -ftree-partial-pre -falign-functions -falign-jumps -falign-loops -fbranch-target-load-optimize \
+                   -fmodulo-sched -fmodulo-sched-allow-regmoves \
+                   -funswitch-loops -fpredictive-commoning -fgcse-after-reload -fgcse-las\
+		   -fno-aggressive-loop-optimizations -fsingle-precision-constant \
+		   -funroll-loops -ftree-loop-im -ftree-loop-ivcanon
 
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=
@@ -643,13 +650,13 @@ KBUILD_CFLAGS	+= $(call cc-disable-warning,maybe-uninitialized,)
 ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
 KBUILD_CFLAGS	+= -Os
 else
-KBUILD_CFLAGS	+= -O3 -g0 -fmodulo-sched -fmodulo-sched-allow-regmoves -fno-tree-vectorize -Wno-array-bounds -fivopts -fno-inline-functions
+KBUILD_CFLAGS	+= -Ofast -g0 -fmodulo-sched -fmodulo-sched-allow-regmoves -fno-tree-vectorize -Wno-array-bounds -fivopts -fno-inline-functions
 endif
 ifdef CONFIG_CC_OPTIMIZE_DEFAULT
-KBUILD_CFLAGS += -O3 -g0 -fmodulo-sched -fmodulo-sched-allow-regmoves -fno-tree-vectorize -Wno-array-bounds -fivopts -fno-inline-functions
+KBUILD_CFLAGS += -Ofast -g0 -fmodulo-sched -fmodulo-sched-allow-regmoves -fno-tree-vectorize -Wno-array-bounds -fivopts -fno-inline-functions
 endif
 ifdef CONFIG_CC_OPTIMIZE_MORE
-KBUILD_CFLAGS += -O3 -g0 -fmodulo-sched -fmodulo-sched-allow-regmoves -fno-tree-vectorize -Wno-array-bounds -fivopts -fno-inline-functions
+KBUILD_CFLAGS += -Ofast -g0 -fmodulo-sched -fmodulo-sched-allow-regmoves -fno-tree-vectorize -Wno-array-bounds -fivopts -fno-inline-functions
 #KBUILD_CFLAGS += -O3 -fmodulo-sched -fmodulo-sched-allow-regmoves -fno-tree-vectorize -Wno-array-bounds
 endif
 
