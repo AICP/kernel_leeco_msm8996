@@ -1,3 +1,7 @@
+
+CFLAGS_board-msm-bcm4356.o := -fno-strict-aliasing
+CFLAGS_rpm_log.o := -fno-strict-aliasing
+
 obj-$(CONFIG_USE_OF) += board-dt.o
 obj-$(CONFIG_ARCH_MDM9640) += board-9640.o
 obj-$(CONFIG_ARCH_MDM9607) += board-9607.o
