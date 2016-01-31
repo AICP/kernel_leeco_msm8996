@@ -377,7 +377,7 @@ GCC_OPT		:=	-ffast-math \
 			$(GRAPHITE)
 
 AS		= $(CROSS_COMPILE)as
-LD		= $(CROSS_COMPILE)ld -O3 --strip-debug
+LD		= $(CROSS_COMPILE)ld.gold -O3 --strip-debug
 CC		= $(CCACHE) $(CROSS_COMPILE)gcc $(GCC_OPT)
 CPP		= $(CC) -E
 AR		= $(CROSS_COMPILE)ar
