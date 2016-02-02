@@ -143,6 +143,7 @@ struct scan_control {
 /*
  * From 0 .. 100.  Higher means more swappy.
  */
+<<<<<<< HEAD
 int vm_swappiness = 60;
 /*
  * The total number of pages which are beyond the high watermark within all
@@ -155,6 +156,10 @@ char *kswapd_cpu_mask = CONFIG_KSWAPD_CPU_AFFINITY_MASK;
 #else
 char *kswapd_cpu_mask = NULL;
 #endif
+
+int vm_swappiness = 15;
+long vm_total_pages;	/* The total number of pages which the VM controls */
+
 
 static LIST_HEAD(shrinker_list);
 static DECLARE_RWSEM(shrinker_rwsem);
