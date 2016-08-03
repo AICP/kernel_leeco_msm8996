@@ -300,7 +300,7 @@ GRAPHITE = -fgraphite -fgraphite-identity -floop-interchange -ftree-loop-linear 
 HOSTCC       = $(CCACHE) gcc
 HOSTCXX      = $(CCACHE) g++
 HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -pipe -g0 -DNDEBUG -O3 -fno-toplevel-reorder -fuse-linker-plugin -flto=4 -fomit-frame-pointer -fopenmp $(GRAPHITE) -std=gnu89
-HOSTCXXFLAGS = -pipe -g0 -DNDEBUG -O3 -fno-toplevel-reorder -fuse-linker-plugin -flto=4 $(GRAPHITE)
+HOSTCXXFLAGS = -pipe -g0 -DNDEBUG -O3 -fno-toplevel-reorder -fuse-linker-plugin -flto=4 $(GRAPHITE) -std=gnu++14
 
 ifeq ($(shell $(HOSTCC) -v 2>&1 | grep -c "clang version"), 1)
 HOSTCFLAGS  += -Wno-unused-value -Wno-unused-parameter \
@@ -377,7 +377,7 @@ GCC_OPT		:=	-ffast-math \
 			$(GRAPHITE)
 			#$(GRAPHITE)
 AS		= $(CROSS_COMPILE)as
-LD		= $(CROSS_COMPILE)ld.gold -O3 --strip-debug
+LD		= $(CROSS_COMPILE)ld -O3 --strip-debug
 CC		= $(CCACHE) $(CROSS_COMPILE)gcc $(GCC_OPT)
 CPP		= $(CC) -E
 AR		= $(CROSS_COMPILE)ar
