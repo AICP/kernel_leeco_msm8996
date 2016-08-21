@@ -25,6 +25,8 @@ aes-arm-ce-y	:= aes-ce-core.o aes-ce-glue.o
 
 ccflags-y := -O3
 
+ccflags-y := -O3
+
 quiet_cmd_perl = PERL    $@
       cmd_perl = $(PERL) $(<) > $(@)
 
