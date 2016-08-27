@@ -69,3 +69,5 @@ obj-$(CONFIG_TI_DRV2667) += ti_drv2667.o
 obj-$(CONFIG_USB_EXT_TYPE_C_PERICOM)	+= type-c-pericom.o
 obj-$(CONFIG_USB_EXT_TYPE_C_TI)		+= type-c-ti.o
 obj-$(CONFIG_QPNP_MISC) 	+= qpnp-misc.o
+obj-$(CONFIG_FORCE_FAST_CHARGE) += fastchg.o
+
