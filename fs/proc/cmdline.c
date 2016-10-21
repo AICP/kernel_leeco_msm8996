@@ -48,7 +48,7 @@ static int __init proc_cmdline_init(void)
 
 		memmove(offset_addr, &cmd[offset + i + 1], len - i - offset);
 	}
- 
+
 	proc_create("cmdline", 0, NULL, &cmdline_proc_fops);
 	return 0;
 }
