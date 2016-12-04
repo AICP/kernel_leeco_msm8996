@@ -20,6 +20,7 @@
 #include <linux/elevator.h>
 #include <linux/bio.h>
 #include <linux/module.h>
+#include <linux/version.h>
 #include <linux/init.h>
 
 enum { ASYNC, SYNC };
@@ -53,9 +54,9 @@ static void tripndroid_merged_requests(struct request_queue *q, struct request *
 	 * and move into next position (next will be deleted) in fifo.
 	 */
 	if (!list_empty(&rq->queuelist) && !list_empty(&next->queuelist)) {
-		if (time_before(rq_fifo_time(next), rq_fifo_time(rq))) {
+		if (time_before(next->fifo_time, rq->fifo_time)) {
 			list_move(&rq->queuelist, &next->queuelist);
-			rq_set_fifo_time(rq, rq_fifo_time(next));
+			rq->fifo_time = next->fifo_time;
 		}
 	}
 
@@ -68,7 +69,7 @@ static void tripndroid_add_request(struct request_queue *q, struct request *rq)
 	const int sync = rq_is_sync(rq);
 	const int data_dir = rq_data_dir(rq);
 
-	rq_set_fifo_time(rq, jiffies + td->fifo_expire[sync][data_dir]);
+	rq->fifo_time = jiffies + td->fifo_expire[sync][data_dir];
 	list_add(&rq->queuelist, &td->fifo_list[sync][data_dir]);
 }
 
@@ -82,7 +83,7 @@ static struct request *tripndroid_expired_request(struct tripndroid_data *td, in
 
 	rq = rq_entry_fifo(list->next);
 
-	if (time_after_eq(jiffies, rq_fifo_time(rq)))
+	if (time_after(jiffies, rq->fifo_time))
 		return rq;
 
 	return NULL;
@@ -199,21 +200,16 @@ static int tripndroid_init_queue(struct request_queue *q, struct elevator_type *
 	struct elevator_queue *eq;
 
 	eq = elevator_alloc(q, e);
-	if (eq == NULL)
+	if (!eq)
 		return -ENOMEM;
 
 	td = kmalloc_node(sizeof(*td), GFP_KERNEL, q->node);
-
-	if (td == NULL) {
+	if (!td) {
 		kobject_put(&eq->kobj);
 		return -ENOMEM;
 	}
 	eq->elevator_data = td;
 
-	spin_lock_irq(q->queue_lock);
-	q->elevator = eq;
-	spin_unlock_irq(q->queue_lock);
-	
 	INIT_LIST_HEAD(&td->fifo_list[SYNC][READ]);
 	INIT_LIST_HEAD(&td->fifo_list[SYNC][WRITE]);
 	INIT_LIST_HEAD(&td->fifo_list[ASYNC][READ]);
@@ -226,6 +222,9 @@ static int tripndroid_init_queue(struct request_queue *q, struct elevator_type *
 	td->fifo_expire[ASYNC][WRITE] = async_write_expire;
 	td->fifo_batch = fifo_batch;
 
+	spin_lock_irq(q->queue_lock);
+	q->elevator = eq;
+	spin_unlock_irq(q->queue_lock);
 	return 0;
 }
 
