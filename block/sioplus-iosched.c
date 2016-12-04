@@ -5,7 +5,6 @@
  * Copyright (C) 2012 Miguel Boton <mboton@gmail.com>
  *           (C) 2013, 2014 Boy Petersen <boypetersen@gmail.com>
  *
- *
  * This algorithm does not do any kind of sorting, as it is aimed for
  * aleatory access devices, but it does some basic merging. We try to
  * keep minimum overhead to achieve low latency.
@@ -34,7 +33,7 @@ static const int async_read_expire = (HZ / 2);	/* ditto for async, these limits 
 static const int async_write_expire = (HZ * 2);	/* ditto for async, these limits are SOFT! */
 
 static const int writes_starved = 1;		/* max times reads can starve a write */
-static const int fifo_batch     = 16;		/* # of sequential requests treated as one
+static const int fifo_batch     = 3;		/* # of sequential requests treated as one
 						   by the above parameters. For throughput. */
 
 /* Elevator data */
@@ -61,9 +60,9 @@ sio_merged_requests(struct request_queue *q, struct request *rq,
 	 * and move into next position (next will be deleted) in fifo.
 	 */
 	if (!list_empty(&rq->queuelist) && !list_empty(&next->queuelist)) {
-		if (time_before(rq_fifo_time(next), rq_fifo_time(rq))) {
+		if (time_before(next->fifo_time, rq->fifo_time)) {
 			list_move(&rq->queuelist, &next->queuelist);
-			rq_set_fifo_time(rq, rq_fifo_time(next));
+			rq->fifo_time = next->fifo_time;
 		}
 	}
 
@@ -82,7 +81,7 @@ sio_add_request(struct request_queue *q, struct request *rq)
 	 * Add request to the proper fifo list and set its
 	 * expire time.
 	 */
-	rq_set_fifo_time(rq, jiffies + sd->fifo_expire[sync][data_dir]);
+	rq->fifo_time = jiffies + sd->fifo_expire[sync][data_dir];
 	list_add_tail(&rq->queuelist, &sd->fifo_list[sync][data_dir]);
 }
 
@@ -111,7 +110,7 @@ sio_expired_request(struct sio_data *sd, int sync, int data_dir)
 	rq = rq_entry_fifo(list->next);
 
 	/* Request has expired */
-	if (time_after_eq(jiffies, rq_fifo_time(rq)))
+	if (time_after_eq(jiffies, rq->fifo_time))
 		return rq;
 
 	return NULL;
@@ -259,16 +258,20 @@ static int sio_init_queue(struct request_queue *q, struct elevator_type *e)
 	struct elevator_queue *eq;
 
 	eq = elevator_alloc(q, e);
-	if (!eq)
+	if (eq == NULL)
 		return -ENOMEM;
 
 	/* Allocate structure */
 	sd = kmalloc_node(sizeof(*sd), GFP_KERNEL, q->node);
-	if (!sd) {
+	if (sd == NULL) {
 		kobject_put(&eq->kobj);
 		return -ENOMEM;
 	}
 	eq->elevator_data = sd;
+
+	spin_lock_irq(q->queue_lock);
+	q->elevator = eq;
+	spin_unlock_irq(q->queue_lock);
 
 	/* Initialize fifo lists */
 	INIT_LIST_HEAD(&sd->fifo_list[SYNC][READ]);
@@ -283,11 +286,6 @@ static int sio_init_queue(struct request_queue *q, struct elevator_type *e)
 	sd->fifo_expire[ASYNC][READ] = async_read_expire;
 	sd->fifo_expire[ASYNC][WRITE] = async_write_expire;
 	sd->fifo_batch = fifo_batch;
-	sd->writes_starved = writes_starved;
-
-	spin_lock_irq(q->queue_lock);
-	q->elevator = eq;
-	spin_unlock_irq(q->queue_lock);
 
 	return 0;
 }
