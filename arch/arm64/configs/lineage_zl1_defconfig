@@ -341,6 +341,8 @@ CONFIG_PCI_LABEL=y
 #
 # Kernel Features
 #
+CONFIG_LCD_NOTIFIER=y
+CONFIG_ADRENO_IDLER=y
 
 #
 # ARM errata workarounds via the alternatives framework
@@ -4518,3 +4520,4 @@ CONFIG_ARCH_HAS_SG_CHAIN=y
 CONFIG_QMI_ENCDEC=y
 # CONFIG_QMI_ENCDEC_DEBUG is not set
 # CONFIG_STRICT_MEMORY_RWX is not set
+
