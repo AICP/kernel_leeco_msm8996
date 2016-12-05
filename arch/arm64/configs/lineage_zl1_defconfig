@@ -348,6 +348,10 @@ CONFIG_PCI_LABEL=y
 # CONFIG_HOTPLUG_PCI is not set
 
 #
+# Kernel Features
+#
+
+#
 # ARM errata workarounds via the alternatives framework
 #
 CONFIG_ARM64_ERRATUM_826319=y
