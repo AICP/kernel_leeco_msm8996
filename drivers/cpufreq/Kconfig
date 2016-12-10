@@ -161,6 +161,13 @@ config CPU_FREQ_DEFAULT_GOV_BLU_ACTIVE
 	  loading your cpufreq low-level hardware driver, using the
 	  'interactive' governor for latency-sensitive workloads.	  
 
+config CPU_FREQ_DEFAULT_GOV_WHEATLEY
+	bool "wheatley"
+	select CPU_FREQ_GOV_WHEATLEY
+	select CPU_FREQ_GOV_PERFORMANCE
+	---help---
+	  Use the CPUFreq governor 'wheatley' as default.
+
 endchoice
 
 config CPU_FREQ_GOV_PERFORMANCE
@@ -345,6 +352,10 @@ config CPUFREQ_DT
 	  systems which share clock and voltage across all CPUs.
 
 	  If in doubt, say N.
+
+config CPU_FREQ_GOV_WHEATLEY
+	tristate "'wheatley' cpufreq governor"
+	depends on CPU_FREQ
   
 config CPU_FREQ_GOV_BLU_ACTIVE
 	tristate "'blu_active' cpufreq policy governor"
