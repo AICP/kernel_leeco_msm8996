@@ -10,10 +10,10 @@
  * GNU General Public License for more details.
  */
 
-#include <mhi_sys.h>
-#include <mhi.h>
-#include <mhi_bhi.h>
-#include <mhi_hwio.h>
+#include <../../drivers/platform/msm/mhi/mhi_sys.h>
+#include <../../drivers/platform/msm/mhi/mhi.h>
+#include <../../drivers/platform/msm/mhi/mhi_bhi.h>
+#include <../../drivers/platform/msm/mhi/mhi_hwio.h>
 
 #include <soc/qcom/subsystem_restart.h>
 #include <soc/qcom/subsystem_notif.h>

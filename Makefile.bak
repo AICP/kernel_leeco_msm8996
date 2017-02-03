@@ -295,12 +295,12 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
 	  else if [ -x /bin/bash ]; then echo /bin/bash; \
 	  else echo sh; fi ; fi)
 
-GRAPHITE = -fgraphite -fgraphite-identity -floop-interchange -ftree-loop-linear -floop-strip-mine -floop-block -floop-parallelize-all -floop-nest-optimize
+GRAPHITE = -fgraphite -fgraphite-identity -floop-interchange -ftree-loop-distribution -floop-strip-mine -floop-block -ftree-loop-linear
 
 HOSTCC       = $(CCACHE) gcc
 HOSTCXX      = $(CCACHE) g++
-HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -pipe -g0 -DNDEBUG -O3 -fno-toplevel-reorder -fuse-linker-plugin -flto=4 -fomit-frame-pointer -fopenmp $(GRAPHITE) -std=gnu89
-HOSTCXXFLAGS = -pipe -g0 -DNDEBUG -O3 -fno-toplevel-reorder -fuse-linker-plugin -flto=4 $(GRAPHITE)
+HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -Ofast -fomit-frame-pointer -std=gnu89 $(GRAPHITE)
+HOSTCXXFLAGS = -Ofast $(GRAPHITE)
 
 ifeq ($(shell $(HOSTCC) -v 2>&1 | grep -c "clang version"), 1)
 HOSTCFLAGS  += -Wno-unused-value -Wno-unused-parameter \
@@ -354,30 +354,9 @@ $(srctree)/scripts/Kbuild.include: ;
 include $(srctree)/scripts/Kbuild.include
 
 # Make variables (CC, etc...)
-GCC_OPT		:=	-ffast-math \
-			-O3 \
-			-pipe \
-			-g0 \
-			-DNDEBUG \
-			-fomit-frame-pointer \
-			-fmodulo-sched \
-			-fmodulo-sched-allow-regmoves \
-			-fivopts \
-			-ftree-loop-vectorize \
-			-ftree-slp-vectorize \
-			-fvect-cost-model \
-			-fsingle-precision-constant \
-			-fpredictive-commoning \
-			-fsanitize=leak \
-			-Wno-maybe-uninitialized \
-			-Wno-misleading-indentation \
-			-Wno-array-bounds \
-			-Wno-shift-overflow \
-			$(GRAPHITE)
-
 AS		= $(CROSS_COMPILE)as
-LD		= $(CROSS_COMPILE)ld -O3 --strip-debug
-CC		= $(CCACHE) $(CROSS_COMPILE)gcc $(GCC_OPT)
+LD		= $(CROSS_COMPILE)ld
+REAL_CC		= $(CCACHE) $(CROSS_COMPILE)gcc
 CPP		= $(CC) -E
 AR		= $(CROSS_COMPILE)ar
 NM		= $(CROSS_COMPILE)nm
@@ -394,6 +373,7 @@ CHECK		= sparse
 
 # Use the wrapper for the compiler.  This wrapper scans for new
 # warnings and causes the build to stop upon encountering them.
+CC		= $(srctree)/scripts/gcc-wrapper.py $(REAL_CC)
 
 CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
 		  -Wbitwise -Wno-return-void $(CF)
@@ -641,14 +621,7 @@ KBUILD_CFLAGS	+= $(call cc-disable-warning,maybe-uninitialized,)
 ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
 KBUILD_CFLAGS	+= -Os
 else
-KBUILD_CFLAGS	+= -O3
-endif
-ifdef CONFIG_CC_OPTIMIZE_DEFAULT
-KBUILD_CFLAGS += -O3 -g0 -fmodulo-sched -fmodulo-sched-allow-regmoves -fno-tree-vectorize -Wno-array-bounds -fivopts -fno-inline-functions
-endif
-ifdef CONFIG_CC_OPTIMIZE_MORE
-KBUILD_CFLAGS += -O3 -g0 -fmodulo-sched -fmodulo-sched-allow-regmoves -fno-tree-vectorize -Wno-array-bounds -fivopts -fno-inline-functions
-#KBUILD_CFLAGS += -O3 -fmodulo-sched -fmodulo-sched-allow-regmoves -fno-tree-vectorize -Wno-array-bounds
+KBUILD_CFLAGS	+= -O2
 endif
 
 # Tell gcc to never replace conditional load with a non-conditional one
