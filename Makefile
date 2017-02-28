@@ -373,6 +373,7 @@ GCC_OPT		:=	-ffast-math \
 			-Wno-misleading-indentation \
 			-Wno-array-bounds \
 			-Wno-shift-overflow \
+		        -mcpu=cortex-a57 -mtune=cortex-a57 \
 			$(GRAPHITE)
 
 AS		= $(CROSS_COMPILE)as
@@ -429,7 +430,7 @@ KBUILD_CFLAGS   := $(GRAPHITE) -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs 
 		   -Werror-implicit-function-declaration \
 		   -Wno-format-security \
 		   -std=gnu89 \
-	           -mcpu=cortex-a57
+	           -mcpu=cortex-a57 -mtune=cortex-a57
 
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=
