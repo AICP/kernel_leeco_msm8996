@@ -843,6 +843,14 @@ config MSM_QBT1000
 	  This driver is used to enable clocks and marshal buffers for trusted
 	  applications running in the trusted execution environment.
 
+config ASMP
+ 	bool "Multi-core automatic hotplug support"
+ 	depends on SMP
+ 	default n
+ 	help
+ 	Automatically hotplugs the multiple cpu cores on and off
+ 	based on cpu load and suspend stat
+
 source "drivers/soc/qcom/memshare/Kconfig"
 
 endif # ARCH_MSM
