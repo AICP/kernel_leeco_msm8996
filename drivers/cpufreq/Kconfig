@@ -196,6 +196,12 @@ config CPU_FREQ_DEFAULT_GOV_ALUCARD
 	select CPU_FREQ_GOV_ALUCARD
 	help
 
+config CPU_FREQ_DEFAULT_GOV_DESPAIR
+	bool "despair"
+	select CPU_FREQ_GOV_DESPAIR
+	select CPU_FREQ_GOV_PERFORMANCE
+    help
+
 endchoice
 
 config CPU_FREQ_GOV_PERFORMANCE
@@ -434,6 +440,13 @@ config CPU_FREQ_GOV_ALUCARD
 	depends on CPU_FREQ
 	select CPU_FREQ_GOV_COMMON
 
+
+config CPU_FREQ_GOV_DESPAIR
+	tristate "'despair' cpufreq governor"
+	depends on CPU_FREQ
+	select CPU_FREQ_GOV_COMMON
+    help
+        If in doubt, say N.
 
 config CPUFREQ_DT
 	tristate "Generic DT based cpufreq driver"
