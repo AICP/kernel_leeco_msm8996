@@ -595,7 +595,7 @@
 				qcom,default-state = "off";
 				linux,name = "red";
 				linux,default-trigger =
-					"battery-charging";
+					"none";
 				qcom,start-idx = <0>;
 				qcom,ramp-step-ms = <100>;
 				qcom,duty-pcts = [00 03 06 09 0c 0f 12 15 18 1b 1e
@@ -614,7 +614,7 @@
 				qcom,max-current = <12>;
 				qcom,default-state = "off";
 				linux,name = "green";
-				linux,default-trigger = "battery-full";
+				linux,default-trigger = "none";
 				qcom,start-idx = <0>;
 				qcom,ramp-step-ms = <100>;
 				qcom,duty-pcts = [00 03 06 09 0c 0f 12 15 18 1b 1e
@@ -633,7 +633,7 @@
 				qcom,max-current = <12>;
 				qcom,default-state = "off";
 				linux,name = "blue";
-				linux,default-trigger = "boot-indication";
+				linux,default-trigger = "none";
 				qcom,start-idx = <0>;
 				qcom,ramp-step-ms = <100>;
 				qcom,duty-pcts = [00 03 06 09 0c 0f 12 15 18 1b 1e
