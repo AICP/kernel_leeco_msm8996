@@ -389,7 +389,7 @@ KBUILD_CFLAGS   := -Werror -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -std=gnu89 $(call cc-option,-fno-PIE)
 
 # Choose Cortex-A57 as the target which is the closest to Kryo.
-KBUILD_CFLAGS	+= -mcpu=cortex-a57
+KBUILD_CFLAGS	+= -mcpu=cortex-a57+crc+crypto
 
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=
