@@ -490,6 +490,12 @@ config CPU_FREQ_GOV_YANKACTIVE
 	  and can be achieved using interactive with a script. This is added for
 	  simplification purposes for myself.
 
+config FINGERPRINT_BOOST
+	bool "Fingerprint Boost"
+	default y
+	help
+	  Boosts available CPUs to max frequency on fingerprint sensor input.
+
 menu "x86 CPU frequency scaling drivers"
 depends on X86
 source "drivers/cpufreq/Kconfig.x86"
