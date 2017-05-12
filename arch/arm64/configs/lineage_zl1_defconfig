@@ -348,29 +348,6 @@ CONFIG_PCI_LABEL=y
 # CONFIG_HOTPLUG_PCI is not set
 
 #
-<<<<<<< HEAD
-# Kernel Features
-#
-
-#
-=======
-<<<<<<< HEAD
-=======
-# Kernel Features
-#
-CONFIG_LZ4_COMPRESS=y
-CONFIG_LZ4_DECOMPRESS=y
-CONFIG_LCD_NOTIFIER=y
-CONFIG_CRYPTO_CRC32_ARM64=y
-CONFIG_ZSWAP=y
-CONFIG_POWERSUSPEND=y
-CONFIG_QUICK_WAKEUP=y
-CONFIG_DYNAMIC_FSYNC=y
-CONFIG_STATE_NOTIFIER=y
-
-#
->>>>>>> 7fcf8c7... defconfig: enable powersuspend
->>>>>>> c644ed5afeaa... defconfig: enable powersuspend
 # ARM errata workarounds via the alternatives framework
 #
 CONFIG_ARM64_ERRATUM_826319=y
