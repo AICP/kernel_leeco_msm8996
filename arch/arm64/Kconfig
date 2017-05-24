@@ -706,7 +706,7 @@ source kernel/Kconfig.preempt
 
 config HZ
 	int
-	default 100
+	default 1000
 
 config ARCH_HAS_HOLES_MEMORYMODEL
 	def_bool y if SPARSEMEM
