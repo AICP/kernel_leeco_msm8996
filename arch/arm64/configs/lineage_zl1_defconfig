@@ -373,6 +373,7 @@ CONFIG_LCD_NOTIFIER=y
 CONFIG_CRYPTO_CRC32_ARM64=y
 CONFIG_ZSWAP=y
 CONFIG_POWERSUSPEND=y
+CONFIG_QUICK_WAKEUP=y
 
 #
 # ARM errata workarounds via the alternatives framework
