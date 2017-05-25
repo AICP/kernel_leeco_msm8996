@@ -851,6 +851,10 @@ config ASMP
  	Automatically hotplugs the multiple cpu cores on and off
  	based on cpu load and suspend stat
 
+config STATE_NOTIFIER
+        bool "State Notifier"
+	default n
+
 source "drivers/soc/qcom/memshare/Kconfig"
 
 endif # ARCH_MSM
