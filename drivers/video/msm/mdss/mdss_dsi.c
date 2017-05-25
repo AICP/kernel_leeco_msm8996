@@ -47,6 +47,10 @@ static struct mdss_dsi_data *mdss_dsi_res;
 
 static struct pm_qos_request mdss_dsi_pm_qos_request;
 
+#ifdef CONFIG_STATE_NOTIFIER
+#include <linux/state_notifier.h>
+#endif
+
 static void mdss_dsi_pm_qos_add_request(struct mdss_dsi_ctrl_pdata *ctrl_pdata)
 {
 	struct irq_info *irq_info;
