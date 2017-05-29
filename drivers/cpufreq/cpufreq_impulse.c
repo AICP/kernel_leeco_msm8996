@@ -454,7 +454,7 @@ static void cpufreq_impulse_timer(unsigned long data)
 #ifdef CONFIG_STATE_NOTIFIER
 	tunables->boosted = tunables->boosted && !state_suspended;
 #endif
-	this_hispeed_freq = max(tunables->hispeed_freq, ppol->policy->min);
+	this_hispeed_freq = min(tunables->hispeed_freq, ppol->policy->min);
 
 	if (tunables->boosted) {
 		if (ppol->target_freq < this_hispeed_freq &&
@@ -1253,7 +1253,7 @@ static int cpufreq_governor_impulse(struct cpufreq_policy *policy,
 
 		freq_table = cpufreq_frequency_get_table(policy->cpu);
 		if (!tunables->hispeed_freq)
-			tunables->hispeed_freq = policy->max;
+			tunables->hispeed_freq = policy->min;
 
 		ppol = per_cpu(polinfo, policy->cpu);
 		ppol->policy = policy;
