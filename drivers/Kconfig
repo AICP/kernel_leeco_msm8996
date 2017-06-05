@@ -198,8 +198,6 @@ source "drivers/firmware/Kconfig"
 
 source "drivers/bif/Kconfig"
 
-source "drivers/gud/Kconfig"
-
 # Letv driver config
 source "drivers/letv/Kconfig"
 endmenu
