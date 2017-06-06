@@ -1040,8 +1040,10 @@ static int msm_open(struct file *filep)
 	BUG_ON(!pvdev);
 
 	/* !!! only ONE open is allowed !!! */
-	if (atomic_cmpxchg(&pvdev->opened, 0, 1))
+	if (atomic_read(&pvdev->opened))
 		return -EBUSY;
+
+	atomic_set(&pvdev->opened, 1);
 
 	spin_lock_irqsave(&msm_pid_lock, flags);
 	msm_pid = get_pid(task_pid(current));
