@@ -46,7 +46,7 @@ static ssize_t power_supply_show_property(struct device *dev,
 	static char *type_text[] = {
 		"Unknown", "Battery", "UPS", "Mains", "USB",
 		"USB_DCP", "USB_CDP", "USB_ACA",
-		"USB_HVDCP", "USB_HVDCP_3", "USB_PD", "Wireless", "BMS", "USB_Parallel",
+		"USB_HVDCP", "USB_HVDCP_3", "Wireless", "BMS", "USB_Parallel",
 		"Wipower", "TYPEC", "TYPEC_UFP", "TYPEC_DFP"
 	};
 	static char *status_text[] = {
@@ -225,9 +225,6 @@ static struct device_attribute power_supply_attrs[] = {
 	POWER_SUPPLY_ATTR(temp_cool),
 	POWER_SUPPLY_ATTR(temp_warm),
 	POWER_SUPPLY_ATTR(system_temp_level),
-#ifdef CONFIG_PRODUCT_LE_ZL1
-	POWER_SUPPLY_ATTR(system_scn),
-#endif
 	POWER_SUPPLY_ATTR(resistance),
 	POWER_SUPPLY_ATTR(resistance_capacitive),
 	POWER_SUPPLY_ATTR(resistance_id),

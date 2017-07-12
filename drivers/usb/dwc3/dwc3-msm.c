@@ -44,10 +44,8 @@
 #include <linux/clk/msm-clk.h>
 #include <linux/msm-bus.h>
 #include <linux/irq.h>
-#include <linux/qpnp/qpnp-adc.h>
 #include <linux/suspend.h>
 #include <linux/fb.h>
-#include <linux/notifier.h>
 #include <linux/cclogic.h>
 
 #include "power.h"
@@ -2870,16 +2868,6 @@ static int dwc3_msm_probe(struct platform_device *pdev)
 	int ext_hub_reset_gpio;
 	u32 val;
 
-#ifdef MHL_POWER_OUT
-	dwc3_mhl_n = kzalloc(sizeof(struct dwc3_mhl), GFP_KERNEL);
-	if (!dwc3_mhl_n) {
-		dev_err(&pdev->dev, "not enough memory to dwc3_mhl_n\n");
-		return -ENOMEM;
-	}
-
-	dwc3_mhl_t = pdev;
-#endif
-
 	mdwc = devm_kzalloc(&pdev->dev, sizeof(*mdwc), GFP_KERNEL);
 	if (!mdwc)
 		return -ENOMEM;
@@ -3936,10 +3924,9 @@ static int dwc3_msm_pm_suspend(struct device *dev)
 	dev_dbg(dev, "dwc3-msm PM suspend\n");
 	dbg_event(0xFF, "PM Sus", 0);
 
-	//flush_workqueue(mdwc->dwc3_wq);
+	flush_workqueue(mdwc->dwc3_wq);
 	if (!atomic_read(&dwc->in_lpm)) {
 		dev_err(mdwc->dev, "Abort PM suspend!! (USB is outside LPM)\n");
-		pm_wakeup_event(dev, 2000);
 		return -EBUSY;
 	}
 
