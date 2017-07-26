@@ -44,9 +44,11 @@
 #include <linux/clk/msm-clk.h>
 #include <linux/msm-bus.h>
 #include <linux/irq.h>
+#ifdef CONFIG_PRODUCT_LE_X2
 #include <linux/suspend.h>
 #include <linux/fb.h>
 #include <linux/cclogic.h>
+#endif
 
 #include "power.h"
 #include "core.h"
@@ -2821,6 +2823,7 @@ static int dwc3_msm_get_clk_gdsc(struct dwc3_msm *mdwc)
 	return 0;
 }
 
+#ifdef CONFIG_PRODUCT_LE_X2
 static int usbheadset_resume_pm_event(struct notifier_block *notifier,
 	   unsigned long event, void *data)
 {
@@ -2852,7 +2855,7 @@ static int usbheadset_resume_pm_event(struct notifier_block *notifier,
 static struct notifier_block usbheadset_pm_resume_notifier_block = {
 	.notifier_call = usbheadset_resume_pm_event,
 };
-
+#endif
 
 static int dwc3_msm_probe(struct platform_device *pdev)
 {
@@ -3203,7 +3206,9 @@ static int dwc3_msm_probe(struct platform_device *pdev)
 
 	device_init_wakeup(mdwc->dev, 1);
 	pm_stay_awake(mdwc->dev);
+#ifdef CONFIG_PRODUCT_LE_X2
 	fb_register_client(&usbheadset_pm_resume_notifier_block);
+#endif
 
 	if (of_property_read_bool(node, "qcom,disable-dev-mode-pm"))
 		pm_runtime_get_noresume(mdwc->dev);
@@ -3345,8 +3350,10 @@ static int dwc3_otg_start_host(struct dwc3_msm *mdwc, int on)
 			mdwc->vbus_reg = NULL;
 			return -EPROBE_DEFER;
 		}
+#ifdef CONFIG_PRODUCT_LE_X2
 		mdwc->vbus_on = 0;
 		_msm_usb_vbus_on(mdwc);
+#endif
 	}
 
 	if (on) {
@@ -3911,10 +3918,14 @@ ret:
 	return;
 }
 
+#ifdef CONFIG_PRODUCT_LE_X2
 extern int cclogic_get_audio_mode(void);
+#endif
 #ifdef CONFIG_PM_SLEEP
+#ifdef CONFIG_PRODUCT_LE_X2
 int usb_vbus_suspend = 0;
 extern int letv_audio_mode_supported(void *data);
+#endif
 static int dwc3_msm_pm_suspend(struct device *dev)
 {
 	int ret = 0;
@@ -3933,11 +3944,13 @@ static int dwc3_msm_pm_suspend(struct device *dev)
 	ret = dwc3_msm_suspend(mdwc);
 	if (!ret)
 		atomic_set(&mdwc->pm_suspended, 1);
+#ifdef CONFIG_PRODUCT_LE_X2
 	if (mdwc->vbus_on && letv_audio_mode_supported(NULL) &&
 	    cclogic_get_audio_mode() == 0) {
 		_msm_usb_vbus_off(NULL);
 		mdelay(300);
 	}
+#endif
 	return ret;
 }
 
