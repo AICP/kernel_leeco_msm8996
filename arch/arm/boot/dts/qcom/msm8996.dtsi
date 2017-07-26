@@ -2758,11 +2758,11 @@
 		reg = <0x70000 0x1000>;
 		qcom,sensor-id = <11>;
 		qcom,poll-ms = <100>;
-		qcom,limit-temp = <70>;
+		qcom,limit-temp = <50>;
 		qcom,temp-hysteresis = <10>;
 		qcom,therm-reset-temp = <115>;
 		qcom,freq-step = <4>;
-		qcom,core-limit-temp = <90>;
+		qcom,core-limit-temp = <50>;
 		qcom,core-temp-hysteresis = <10>;
 		qcom,hotplug-temp = <105>;
 		qcom,hotplug-temp-hysteresis = <40>;
