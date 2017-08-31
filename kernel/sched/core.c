@@ -1296,7 +1296,6 @@ load_scale_cpu_efficiency(struct sched_cluster *cluster)
 			    cluster->efficiency);
 }
 
-
 /*
  * Return load_scale_factor of a cpu in reference to cpu with best max_freq
  * (max_possible_freq), so that one with best max_freq gets a load_scale_factor
@@ -1307,35 +1306,6 @@ static inline unsigned long load_scale_cpu_freq(struct sched_cluster *cluster)
 	return DIV_ROUND_UP(1024 * max_possible_freq,
 			   cluster_max_freq(cluster));
 }
-
-#if defined(CONFIG_64BIT) && defined(CONFIG_SMP)
- /*
-	* 64-bit doesn't need locks to atomically read a 64bit value.
-	* So we have a optimization chance when the task's delta_exec is 0.
-	* Reading ->on_cpu is racy, but this is ok.
-	*
-	* If we race with it leaving cpu, we'll take a lock. So we're correct.
-	* If we race with it entering cpu, unaccounted time is 0. This is
-	* indistinguishable from the read occurring a few cycles earlier.
-	*/
- if (!p->on_cpu)
- return p->se.sum_exec_runtime;
-#endif
-
-		/*
-		 * Ok, time to look more closely! We need the rq
-		 * lock now, to be *sure*. If we're wrong, we'll
-		 * just go back and repeat.
-		 */
-		rq = task_rq_lock(p, &flags);
-		trace_sched_wait_task(p);
-		running = task_running(rq, p);
-		on_rq = p->on_rq;
-		ncsw = 0;
-		if (!match_state || p->state == match_state)
-			ncsw = p->nvcsw | LONG_MIN; /* sets MSB */
-		task_rq_unlock(rq, p, &flags);
-
 
 static int compute_capacity(struct sched_cluster *cluster)
 {
