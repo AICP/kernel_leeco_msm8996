@@ -3205,12 +3205,6 @@
 		compatible = "qcom,msm-compress-dsp";
 	};
 
-	pcmnoirq: qcom,msm-pcm-dsp-noirq {
-		compatible = "qcom,msm-pcm-dsp-noirq";
-		qcom,msm-pcm-low-latency;
-		qcom,latency-level = "ultra";
-	};
-
 	voip: qcom,msm-voip-dsp {
 		compatible = "qcom,msm-voip-dsp";
 	};
