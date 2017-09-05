@@ -126,7 +126,7 @@ static bool letv_pd_charger_confirmed;
 
 struct message_handle_struct *timer_msg_struct[TIMER_NUMBER_END];
 extern int letv_pd_notice_charger_in_parameter(int voltage, int mA);
-//extern int letv_pd_notice_ver_just_vol(unsigned char *pd_ver, int size);
+extern int letv_pd_notice_ver_just_vol(unsigned char *pd_ver, int size);
 
 static LIST_HEAD(handle_list_head);
 static DEFINE_SPINLOCK(letv_pd_lock);
@@ -953,7 +953,7 @@ static int letv_pd_message_handle_ps_rdy(struct hpi_msg *msg)
 	int usb_mode;
 	int ret;
 	u8 value[4];
-	//int voltage, mA;
+	int voltage, mA;
 
 	pr_err("%s:DEBUG: entry\n", __func__);
 	if (!msg) {
@@ -961,7 +961,6 @@ static int letv_pd_message_handle_ps_rdy(struct hpi_msg *msg)
 		return -1;
 	}
 
-#if 0
 	if (letv_pd_usb_off_charger_mode) {
 		if (letv_pd_get_current_rdo(&voltage, &mA)) {
 			pr_err("%s:ERROR: get pdo fail\n", __func__);
@@ -972,10 +971,18 @@ static int letv_pd_message_handle_ps_rdy(struct hpi_msg *msg)
 		letv_pd_notice_charger_in_parameter(letv_pd_charger_in_voltage, letv_pd_charger_in_mA);
 		return 0;
 	}
-#endif
+
 	usb_mode = letv_pd_get_usb_mode();
 	switch(usb_mode) {
 	case LETV_USB_UFP_MODE:
+		if (letv_pd_get_current_rdo(&voltage, &mA)) {
+			pr_err("%s:ERROR: get pdo fail\n", __func__);
+			break;
+		}
+
+		letv_pd_set_charger_in_parameter(voltage, mA);
+		letv_pd_notice_charger_in_parameter(letv_pd_charger_in_voltage, letv_pd_charger_in_mA);
+		break;
 	case LETV_USB_DFP_MODE:
 		/*DFP mode charger, it's not used now*/
 		if (0) {
@@ -1560,7 +1567,7 @@ static int letv_pd_message_vdm_handle_charger_pn(unsigned char *vdm_data, int si
 
 	pr_err("%s:DEBUG: charger pn=0x%x, 0x%x, 0x%x, 0x%x\n",
 			__func__,charger_pn[0],charger_pn[1],charger_pn[2],charger_pn[3]);
-	//letv_pd_notice_ver_just_vol(charger_pn, 4);
+	letv_pd_notice_ver_just_vol(charger_pn, 4);
 	return 0;
 }
 
