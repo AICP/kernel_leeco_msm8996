@@ -2730,6 +2730,53 @@ static int dwc3_cpu_notifier_cb(struct notifier_block *nfb,
 
 static void dwc3_otg_sm_work(struct work_struct *w);
 
+#ifdef MHL_POWER_OUT
+struct platform_device *dwc3_mhl_t;
+struct dwc3_mhl *dwc3_mhl_n;
+
+bool start_init;
+
+int dwc3_otg_set_mhl_power(bool enable)
+{
+       int ret;
+       if (IS_ERR(dwc3_mhl_n->vbus_mhl)) {
+              pr_err("Failed to get dwc3_mhl_t vbus regulator");
+              return -ENODEV;
+       }
+       pr_err("%s: enable: %d\n", __func__, enable);
+       if (enable)
+              ret = regulator_enable(dwc3_mhl_n->vbus_mhl);
+       else
+              ret = regulator_disable(dwc3_mhl_n->vbus_mhl);
+
+       return ret;
+}
+EXPORT_SYMBOL(dwc3_otg_set_mhl_power);
+
+void dwc3_otg_start_mhl_power(void)
+{
+       if (start_init == true) {
+              pr_err("%s: returned caused by start_init == true...\n",
+                            __func__);
+              return;
+       }
+       pr_err("%s:\n", __func__);
+       if (dwc3_mhl_n == NULL) {
+              pr_err("%s: returned caused by dwc3_mhl_n == NULL...\n",
+                            __func__);
+              return;
+              }
+       start_init = true;
+       dwc3_mhl_n->vbus_mhl =
+                     devm_regulator_get(&dwc3_mhl_t->dev, "vbus_dwc3");
+       if (IS_ERR(dwc3_mhl_n->vbus_mhl)) {
+              pr_err("Failed to get dwc3_mhl_t vbus regulator");
+              return;
+       }
+}
+EXPORT_SYMBOL(dwc3_otg_start_mhl_power);
+#endif
+
 static int dwc3_msm_get_clk_gdsc(struct dwc3_msm *mdwc)
 {
 	int ret;
@@ -2869,6 +2916,15 @@ static int dwc3_msm_probe(struct platform_device *pdev)
 	mdwc = devm_kzalloc(&pdev->dev, sizeof(*mdwc), GFP_KERNEL);
 	if (!mdwc)
 		return -ENOMEM;
+#ifdef MHL_POWER_OUT
+	dwc3_mhl_n = kzalloc(sizeof(struct dwc3_mhl), GFP_KERNEL);
+	if (!dwc3_mhl_n) {
+		dev_err(&pdev->dev, "not enough memory to dwc3_mhl_n\n");
+		return -ENOMEM;
+	}
+
+	dwc3_mhl_t = pdev;
+#endif
 
 	if (dma_set_mask_and_coherent(dev, DMA_BIT_MASK(64))) {
 		dev_err(&pdev->dev, "setting DMA mask to 64 failed.\n");
@@ -3346,10 +3402,6 @@ static int dwc3_otg_start_host(struct dwc3_msm *mdwc, int on)
 			mdwc->vbus_reg = NULL;
 			return -EPROBE_DEFER;
 		}
-#ifdef CONFIG_PRODUCT_LE_X2
-		mdwc->vbus_on = 0;
-		_msm_usb_vbus_on(mdwc);
-#endif
 	}
 
 	if (on) {
@@ -3935,6 +3987,7 @@ static int dwc3_msm_pm_suspend(struct device *dev)
 	ret = dwc3_msm_suspend(mdwc);
 	if (!ret)
 		atomic_set(&mdwc->pm_suspended, 1);
+
 	if (mdwc->vbus_on && letv_audio_mode_supported(NULL) &&
 	    cclogic_get_audio_mode() == 0) {
 		_msm_usb_vbus_off(NULL);
