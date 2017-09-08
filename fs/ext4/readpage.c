@@ -45,7 +45,6 @@
 #include <linux/cleancache.h>
 
 #include "ext4.h"
-#include <trace/events/android_fs.h>
 
 /*
  * Call ext4_decrypt on every single page, reusing the encryption
@@ -91,17 +90,6 @@ static inline bool ext4_bio_encrypted(struct bio *bio)
 #endif
 }
 
-static void
-ext4_trace_read_completion(struct bio *bio, int err)
-{
-	struct page *first_page = bio->bi_io_vec[0].bv_page;
-
-	if (first_page != NULL)
-		trace_android_fs_dataread_end(first_page->mapping->host,
-					      page_offset(first_page),
-					      bio->bi_iter.bi_size);
-}
-
 /*
  * I/O completion handler for multipage BIOs.
  *
@@ -118,9 +106,6 @@ static void mpage_end_io(struct bio *bio, int err)
 {
 	struct bio_vec *bv;
 	int i;
-
-	if (trace_android_fs_dataread_start_enabled())
-		ext4_trace_read_completion(bio, err);
 
 	if (ext4_bio_encrypted(bio)) {
 		struct ext4_crypto_ctx *ctx = bio->bi_private;
@@ -147,24 +132,6 @@ static void mpage_end_io(struct bio *bio, int err)
 	}
 
 	bio_put(bio);
-}
-
-static void
-ext4_submit_bio_read(struct bio *bio)
-{
-	if (trace_android_fs_dataread_start_enabled()) {
-		struct page *first_page = bio->bi_io_vec[0].bv_page;
-
-		if (first_page != NULL) {
-			trace_android_fs_dataread_start(
-				first_page->mapping->host,
-				page_offset(first_page),
-				bio->bi_iter.bi_size,
-				current->pid,
-				current->comm);
-		}
-	}
-	submit_bio(READ, bio);
 }
 
 int ext4_mpage_readpages(struct address_space *mapping,
@@ -311,7 +278,7 @@ int ext4_mpage_readpages(struct address_space *mapping,
 #ifdef CONFIG_EXT4_FS_ENCRYPTION
 			ext4_set_bio_crypt_context(inode, bio);
 #endif
-			ext4_submit_bio_read(bio);
+			submit_bio(READ, bio);
 			bio = NULL;
 		}
 		if (bio == NULL) {
@@ -346,7 +313,7 @@ int ext4_mpage_readpages(struct address_space *mapping,
 #ifdef CONFIG_EXT4_FS_ENCRYPTION
 			ext4_set_bio_crypt_context(inode, bio);
 #endif
-			ext4_submit_bio_read(bio);
+			submit_bio(READ, bio);
 			bio = NULL;
 		} else
 			last_block_in_bio = blocks[blocks_per_page - 1];
@@ -356,7 +323,7 @@ int ext4_mpage_readpages(struct address_space *mapping,
 #ifdef CONFIG_EXT4_FS_ENCRYPTION
 			ext4_set_bio_crypt_context(inode, bio);
 #endif
-			ext4_submit_bio_read(bio);
+			submit_bio(READ, bio);
 			bio = NULL;
 		}
 		if (!PageUptodate(page))
@@ -372,7 +339,7 @@ int ext4_mpage_readpages(struct address_space *mapping,
 #ifdef CONFIG_EXT4_FS_ENCRYPTION
 		ext4_set_bio_crypt_context(inode, bio);
 #endif
-		ext4_submit_bio_read(bio);
+		submit_bio(READ, bio);
 	}
 	return 0;
 }
