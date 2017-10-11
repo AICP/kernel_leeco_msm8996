@@ -245,7 +245,6 @@ static int msm_actuator_bivcm_handle_i2c_ops(
 	uint32_t size = a_ctrl->reg_tbl_size, i = 0;
 	int32_t rc = 0;
 	uint16_t lens_position;
-	uint16_t target_position;
 	unsigned char data_rd[3];
 	unsigned char  out[5];
 	static unsigned int cnt =0;
@@ -278,45 +277,10 @@ static int msm_actuator_bivcm_handle_i2c_ops(
 			i2c_tbl.delay = delay;
 			a_ctrl->i2c_tbl_index++;
 
-			if(strcmp(a_ctrl->project_name,"turbo")==0)
-			{
-				CDBG("Enter the turbo actuator setting \n");
-				if(write_arr[0].hw_mask == 0x1234)
-     			{
-     				CDBG("-----  HW mask = 0x%08x ,  input next_lens_position = %d \n ",
-						write_arr[0].hw_mask,
-						next_lens_position);
-					
-					i2c_tbl.delay = 0;
-				    reg_setting.size = 1;
-					reg_setting.reg_setting = &i2c_tbl;
-					reg_setting.data_type = MSM_CAMERA_I2C_WORD_DATA;
-					a_ctrl->i2c_client.addr_type =MSM_CAMERA_I2C_BYTE_ADDR;
-					CDBG("maxdac = %d mindac = 0x%08x\n",
-						a_ctrl->maxdac, 
-						a_ctrl->mindac);
-                  
-					target_position = (( a_ctrl->maxdac - a_ctrl->mindac) * next_lens_position + a_ctrl->mindac*1023 + 512) / 1023;					
-					CDBG("target_position = %d reg_addr = 0x%08x\n",
-						target_position, 
-						write_arr[i].reg_addr);
-                  
-					i2c_tbl.reg_data = target_position;
-					i2c_tbl.reg_addr = write_arr[i].reg_addr;
-			    	rc = a_ctrl->i2c_client.
-						i2c_func_tbl->i2c_write_table_w_microdelay(
-					&a_ctrl->i2c_client, &reg_setting);
-					if(rc < 0)
-					{
-						CDBG("i2c_write_table_w_microdelay error:%d\n", rc);
-						return rc;
-					}
-				}
-			}
-			else if(strcmp(a_ctrl->project_name,"x2")==0)
+			if(strcmp(a_ctrl->project_name,"x2")==0)
 			{
 				out[0] = i2c_byte1;
-	        			out[1] = 0xd0;
+				out[1] = 0x90;
 				out[2] = 0x0;
 				out[3] = i2c_byte2 / 256;
 				out[4] = i2c_byte2 % 256;
@@ -1306,6 +1270,7 @@ static int32_t msm_actuator_set_default_focus(
 	return rc;
 }
 
+#if 0
 static int32_t msm_actuator_vreg_control(struct msm_actuator_ctrl_t *a_ctrl,
 							int config)
 {
@@ -1371,8 +1336,7 @@ static int32_t msm_actuator_power_down(struct msm_actuator_ctrl_t *a_ctrl)
 	CDBG("Exit\n");
 	return rc;
 }
-
-#if 0 //Letv haley 20150517 disable because zl1 actuator power up and down by vreg mode 
+#endif
 /*  use gpio control  vreg */
 static int32_t msm_actuator_power_down(struct msm_actuator_ctrl_t *a_ctrl)
 {
@@ -1404,7 +1368,7 @@ static int32_t msm_actuator_power_down(struct msm_actuator_ctrl_t *a_ctrl)
 	CDBG("Exit\n");
 	return rc;
 }
-#endif
+
 static int32_t msm_actuator_set_position(
 	struct msm_actuator_ctrl_t *a_ctrl,
 	struct msm_actuator_set_position_t *set_pos)
@@ -1498,7 +1462,6 @@ static int32_t msm_actuator_bivcm_set_position(
 	CDBG("%s exit %d\n", __func__, __LINE__);
 	return rc;
 }
-
 static int32_t msm_actuator_set_param(struct msm_actuator_ctrl_t *a_ctrl,
 	struct msm_actuator_set_info_t *set_info) {
 	struct reg_settings_t *init_settings = NULL;
@@ -2000,6 +1963,7 @@ static long msm_actuator_subdev_fops_ioctl(struct file *file, unsigned int cmd,
 }
 #endif
 
+#if 0
 static int32_t msm_actuator_power_up(struct msm_actuator_ctrl_t *a_ctrl)
 {
 	int rc = 0;
@@ -2018,8 +1982,7 @@ static int32_t msm_actuator_power_up(struct msm_actuator_ctrl_t *a_ctrl)
 	CDBG("Exit\n");
 	return rc;
 }
-
-#if 0 //Letv haley 20150517 disable because zl1 actuator power up and down by vreg mode
+#endif
 /*use gpio control verg*/
 static int32_t msm_actuator_power_up(struct msm_actuator_ctrl_t *a_ctrl)
 {
@@ -2082,10 +2045,10 @@ static int32_t msm_actuator_power(struct v4l2_subdev *sd, int on)
 	CDBG("Exit\n");
 	return rc;
 }
-#endif
 
 static struct v4l2_subdev_core_ops msm_actuator_subdev_core_ops = {
 	.ioctl = msm_actuator_subdev_ioctl,
+	.s_power = msm_actuator_power,
 };
 
 static struct v4l2_subdev_ops msm_actuator_subdev_ops = {
@@ -2187,8 +2150,6 @@ probe_failure:
 	kfree(act_ctrl_t);
 	return rc;
 }
-
-#if 0 //Letv haley 20150517 disable because zl1 actuator power up and down by vreg mode
 /*  get gpio data information  */
 static int32_t msm_actuator_get_dt_data(struct device_node *of_node,
 		struct msm_actuator_ctrl_t *s_ctrl)
@@ -2287,13 +2248,11 @@ ERROR4:
 
 	return rc;
 }
-#endif
 static int32_t msm_actuator_platform_probe(struct platform_device *pdev)
 {
 	int32_t rc = 0;
 	struct msm_camera_cci_client *cci_client = NULL;
 	struct msm_actuator_ctrl_t *msm_actuator_t = NULL;
-	struct msm_actuator_vreg *vreg_cfg;
 	int err = 0;
 	CDBG("Enter\n");
 
@@ -2341,8 +2300,6 @@ static int32_t msm_actuator_platform_probe(struct platform_device *pdev)
 		pr_err("failed rc %d\n", rc);
 		return rc;
 	}
-    
-#if 0 //Letv haley 20150517 disable because zl1 actuator power up and down by vreg mode
 	/*  use gpio control  not PMIC*/
 	CDBG( " msm_sensor_get_dt_actuator_data\n");
 
@@ -2353,7 +2310,7 @@ static int32_t msm_actuator_platform_probe(struct platform_device *pdev)
 			return rc;
 		}
 	}
-#endif
+#if 0
 	if (of_find_property((&pdev->dev)->of_node,
 			"qcom,cam-vreg-name", NULL)) {
 		vreg_cfg = &msm_actuator_t->vreg_cfg;
@@ -2365,6 +2322,7 @@ static int32_t msm_actuator_platform_probe(struct platform_device *pdev)
 			return rc;
 		}
 	}
+#endif
 
 	msm_actuator_t->act_v4l2_subdev_ops = &msm_actuator_subdev_ops;
 	msm_actuator_t->actuator_mutex = &msm_actuator_mutex;
