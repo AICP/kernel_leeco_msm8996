@@ -34,7 +34,7 @@ static bool enable_wlan_wow_wl_ws = false;
 module_param(enable_wlan_wow_wl_ws, bool, 0644);
 static bool enable_bluedroid_timer_ws = false;
 module_param(enable_bluedroid_timer_ws, bool, 0644);
-static bool enable_ipa_ws = false;
+static bool enable_ipa_ws = true;
 module_param(enable_ipa_ws, bool, 0644);
 static bool enable_wlan_ws = false;
 module_param(enable_wlan_ws, bool, 0644);
