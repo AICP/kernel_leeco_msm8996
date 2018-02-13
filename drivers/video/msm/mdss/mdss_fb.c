@@ -1661,8 +1661,9 @@ void mdss_fb_set_backlight(struct msm_fb_data_type *mfd, u32 bkl_lvl)
 		mfd->unset_bl_level = U32_MAX;
 	}
 
-	if (mdss_fb_is_power_on_interactive(mfd) && mfd->bl_level)
+	if (mdss_fb_is_power_on_interactive(mfd) && mfd->bl_level){
 		mfd->unblank_bl_level = mfd->bl_level;
+	}
 
 	pdata = dev_get_platdata(&mfd->pdev->dev);
 
@@ -1914,10 +1915,12 @@ static int mdss_fb_blank_unblank(struct msm_fb_data_type *mfd)
 			 * the backlight would remain 0 (0 is set in blank).
 			 * Hence resetting back to calibration mode value
 			 */
-			if (!IS_CALIB_MODE_BL(mfd))
+			if (!IS_CALIB_MODE_BL(mfd)){
 				mdss_fb_set_backlight(mfd, mfd->unblank_bl_level);
-			else
+			}
+			else if (IS_CALIB_MODE_BL(mfd)){
 				mdss_fb_set_backlight(mfd, mfd->calib_mode_bl);
+			}
 			else if ((!mfd->panel_info->mipi.post_init_delay) &&
 				(mfd->unset_bl_level != U32_MAX))
 				mdss_fb_set_backlight(mfd, mfd->unset_bl_level);
