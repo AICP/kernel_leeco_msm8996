@@ -88,7 +88,6 @@ void gtp_esd_switch(struct i2c_client *, s32);
 #if GTP_GESTURE_WAKEUP
 static s8 gtp_enter_doze(struct goodix_ts_data *ts);
 #endif
-bool init_done;
 #ifdef GTP_CONFIG_OF
 int gtp_parse_dt_cfg(struct device *dev, u8 *cfg, int *cfg_len, u8 sid);
 #endif
@@ -131,15 +130,6 @@ s32 gtp_i2c_read(struct i2c_client *client, u8 *buf, s32 len)
 			break;
 		dev_err(&client->dev, "I2C retry: %d\n", retries + 1);
 	}
-	if (retries == 5) {
-		/* reset chip would quit doze mode */
-		if (init_done)
-			gtp_reset_guitar(client, 10);
-		else
-			dev_warn(&client->dev,
-				"gtp_reset_guitar exit init_done=%d:\n",
-				init_done);
-	}
 	return ret;
 }
 
@@ -180,12 +170,6 @@ s32 gtp_i2c_write(struct i2c_client *client,u8 *buf,s32 len)
 		{
 			gtp_reset_guitar(client, 10);  
 		}
-		if (init_done)
-			gtp_reset_guitar(client, 10);
-		else
-			dev_warn(&client->dev,
-				"gtp_reset_guitar exit init_done=%d:\n",
-				init_done);
 	}
 	return ret;
 }
@@ -1823,7 +1807,6 @@ static int goodix_ts_probe(struct i2c_client *client, const struct i2c_device_id
 #if GTP_ESD_PROTECT
 	gtp_esd_switch(client, SWITCH_ON);
 #endif
-	init_done = true;
 #if GTP_AUTO_UPDATE
 	ret = gup_init_update_proc(ts);
 	if (ret < 0)
