@@ -1,4 +1,4 @@
-ccflags-y := -Iinclude/uapi/drm -Iinclude/drm -Idrivers/gpu/msm
+ccflags-y := -Iinclude/uapi/drm -Iinclude/drm -Idrivers/gpu/msm -Ofast -fgcse-lm -fgcse-sm -fsched-spec-load -fforce-addr -fsingle-precision-constant
 
 msm_kgsl_core-y = \
 	kgsl.o \
