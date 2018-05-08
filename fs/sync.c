@@ -198,6 +198,8 @@ SYSCALL_DEFINE1(syncfs, int, fd)
  */
 int vfs_fsync_range(struct file *file, loff_t start, loff_t end, int datasync)
 {
+	struct inode *inode = file->f_mapping->host;
+
 #ifdef CONFIG_DYNAMIC_FSYNC
 	if (likely(dyn_fsync_active && suspend_active))
 		return 0;
