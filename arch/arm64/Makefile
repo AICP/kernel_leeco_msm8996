@@ -34,6 +34,9 @@ endif
 
 CHECKFLAGS	+= -D__aarch64__
 
+KBUILD_CFLAGS	+= $(call cc-option,-march=armv8-a+crypto+crc,) $(call cc-option,-mcpu=cortex-a53+crypto+crc,)
+
+
 ifeq ($(CONFIG_ARM64_ERRATUM_843419), y)
 KBUILD_CFLAGS_MODULE	+= -mcmodel=large
 endif
