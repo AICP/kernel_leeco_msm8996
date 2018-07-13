@@ -217,7 +217,7 @@ static struct nat_entry_set *__grab_nat_entry_set(struct f2fs_nm_info *nm_i,
 							struct nat_entry *ne)
 {
 	nid_t set = NAT_BLOCK_OFFSET(ne->ni.nid);
-	struct nat_entry_set *head;
+	struct nat_entry_set *head = NULL;
 
 	head = radix_tree_lookup(&nm_i->nat_set_root, set);
 	if (!head) {
