@@ -338,4 +338,4 @@ config PM_SYNC_BEFORE_SUSPEND
 config	BOEFFLA_WL_BLOCKER
 		bool "Boeffla generic wakelock blocker driver"
 		depends on PM
-		default N
+		default Y
