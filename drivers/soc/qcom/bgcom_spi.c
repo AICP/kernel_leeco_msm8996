@@ -564,11 +564,9 @@ int bgcom_ahb_write(void *handle, uint32_t ahb_start_addr,
 		memset(fxd_mem_buffer, 0, txn_len);
 		tx_buf = fxd_mem_buffer;
 		is_cma_used = true;
-	} else {
-		pr_info("DMA memory used for size[%d]\n", txn_len);
+	} else
 		tx_buf = dma_zalloc_coherent(&spi->dev, txn_len,
 						&dma_hndl, GFP_KERNEL);
-	}
 
 	if (!tx_buf) {
 		mutex_unlock(&cma_buffer_lock);
