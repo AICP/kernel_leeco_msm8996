@@ -3189,11 +3189,8 @@ static void dwc3_gadget_wakeup_interrupt(struct dwc3 *dwc, bool remote_wakeup)
 
 		/*
 		 * In case of remote wake up dwc3_gadget_wakeup_work()
-		 * is doing pm_runtime_get_sync(). But mark last wakeup
-		 * event here to prevent runtime_suspend happening before this
-		 * wakeup event is processed.
+		 * is doing pm_runtime_get_sync().
 		 */
-		pm_runtime_mark_last_busy(dwc->dev);
 		dev_dbg(dwc->dev, "Notify OTG from %s\n", __func__);
 		dwc->b_suspend = false;
 		dwc3_notify_event(dwc,

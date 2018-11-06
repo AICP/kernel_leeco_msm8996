@@ -1447,7 +1447,6 @@ rw_common:
 			break;
 		}
 
-		get_file(file);
 		if (rw == WRITE)
 			file_start_write(file);
 
@@ -1460,7 +1459,6 @@ rw_common:
 
 		if (rw == WRITE)
 			file_end_write(file);
-		fput(file);
 		break;
 
 	case IOCB_CMD_FDSYNC:
