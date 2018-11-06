@@ -2016,8 +2016,8 @@ Output:
 *******************************************************/
 static void goodix_ts_suspend(struct goodix_ts_data *ts)
 {
-	int ret = -1, i;
-
+	s8 ret = -1;    
+	
 	GTP_DEBUG_FUNC();
 	if(ts->gtp_is_suspend)
 		return;
@@ -2061,13 +2061,7 @@ static void goodix_ts_suspend(struct goodix_ts_data *ts)
 	else
 	{
 		hrtimer_cancel(&ts->timer);
-
-	for (i = 0; i < GTP_MAX_TOUCH; i++)
-		gtp_touch_up(ts, i);
-
-	input_report_key(ts->input_dev, BTN_TOUCH, 0);
-	input_sync(ts->input_dev);
-
+	}
 	ret = gtp_enter_sleep(ts);
 	gtp_power_switch(ts->client, 0);
 	ts->ts_pinctrl = devm_pinctrl_get(&ts->client->dev);
