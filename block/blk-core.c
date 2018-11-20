@@ -180,7 +180,7 @@ static void blk_delay_work(struct work_struct *work)
 void blk_delay_queue(struct request_queue *q, unsigned long msecs)
 {
 	if (likely(!blk_queue_dead(q)))
-		queue_delayed_work(kblockd_workqueue, &q->delay_work,
+        queue_delayed_work_on(cpumask_first(cpu_online_mask),kblockd_workqueue, &q->delay_work,
 				   msecs_to_jiffies(msecs));
 }
 EXPORT_SYMBOL(blk_delay_queue);
@@ -316,7 +316,7 @@ EXPORT_SYMBOL(__blk_run_queue);
 void blk_run_queue_async(struct request_queue *q)
 {
 	if (likely(!blk_queue_stopped(q) && !blk_queue_dead(q)))
-		mod_delayed_work(kblockd_workqueue, &q->delay_work, 0);
+		mod_delayed_work_on(cpumask_first(cpu_online_mask),kblockd_workqueue, &q->delay_work, 0);
 }
 EXPORT_SYMBOL(blk_run_queue_async);
 
@@ -2995,14 +2995,14 @@ EXPORT_SYMBOL_GPL(blk_rq_prep_clone);
 
 int kblockd_schedule_work(struct work_struct *work)
 {
-	return queue_work(kblockd_workqueue, work);
+	return queue_work_on(cpumask_first(cpu_online_mask),kblockd_workqueue, work);
 }
 EXPORT_SYMBOL(kblockd_schedule_work);
 
 int kblockd_schedule_delayed_work(struct delayed_work *dwork,
 				  unsigned long delay)
 {
-	return queue_delayed_work(kblockd_workqueue, dwork, delay);
+	return queue_delayed_work_on(cpumask_first(cpu_online_mask),kblockd_workqueue, dwork, delay);
 }
 EXPORT_SYMBOL(kblockd_schedule_delayed_work);
 
