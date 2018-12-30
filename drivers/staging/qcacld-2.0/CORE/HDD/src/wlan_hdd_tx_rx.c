@@ -1531,8 +1531,8 @@ VOS_STATUS hdd_rx_packet_cbk(v_VOID_t *vosContext,
             if (hdd_is_arp_local(skb))
                wake_lock = true;
          }
-         else
-            wake_lock = true;
+         //else
+         //   wake_lock = true;
       }
 
       hdd_tsf_timestamp_rx(pHddCtx, skb, ktime_to_us(skb->tstamp));
