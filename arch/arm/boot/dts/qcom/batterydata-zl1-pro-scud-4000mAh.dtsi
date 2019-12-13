@@ -50,7 +50,6 @@ qcom,letv_zl1_scud_4000mah {
 	];
 };
 &pmi8994_charger {
-	qcom,battery-data = <&mtp_batterydata>;
 	qcom,dc-psy-type = "Wipower";
 	qcom,dcin-vadc = <&pmi8994_vadc>;
 	qcom,wipower-default-ilim-map = <4000000 20000000 550 700 300>;
@@ -68,4 +67,6 @@ qcom,letv_zl1_scud_4000mah {
 &pmi8994_fg {
 	qcom,battery-data = <&mtp_batterydata>;
 	qcom,ext-sense-type;
+	qcom,resume-soc = <99>;
+	qcom,use-otp-profile;
 };
