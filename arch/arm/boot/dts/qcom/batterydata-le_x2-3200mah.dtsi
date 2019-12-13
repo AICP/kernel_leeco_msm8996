@@ -53,4 +53,5 @@ qcom,letv_x2_3200mah {
 &pmi8994_fg {
 	qcom,battery-data = <&mtp_batterydata>;
 	qcom,ext-sense-type;
+	qcom,resume-soc = <99>;
 };

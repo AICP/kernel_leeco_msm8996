@@ -59,4 +59,5 @@ qcom,mtp-3395mah {
 &pmi8994_fg {
 	qcom,battery-data = <&mtp_batterydata>;
 	qcom,ext-sense-type;
+	qcom,resume-soc = <99>;
 };
