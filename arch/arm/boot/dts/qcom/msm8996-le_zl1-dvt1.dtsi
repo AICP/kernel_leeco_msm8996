@@ -35,6 +35,8 @@
         qcom,fg-chg-iterm-ma = <80>;
         qcom,fg-cutoff-voltage-mv = <3300>;
         qcom,irq-volt-empty-mv = <3200>;
+	qcom,battery-data = <&mtp_batterydata>;
+	qcom,ext-sense-type;
 };
 
 &pm8994_mpps {

@@ -405,6 +405,8 @@
 	qcom,hot-bat-decidegc = <500>;
 	qcom,cool-bat-decidegc = <0>;
 	qcom,cold-bat-decidegc = <(-100)>;
+	qcom,battery-data = <&mtp_batterydata>;
+	qcom,ext-sense-type;
 };
 
 
