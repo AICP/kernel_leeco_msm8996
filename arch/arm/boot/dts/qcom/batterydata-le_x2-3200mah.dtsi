@@ -49,3 +49,8 @@ qcom,letv_x2_3200mah {
 		00 00 00 0C
 	];
 };
+
+&pmi8994_fg {
+	qcom,battery-data = <&mtp_batterydata>;
+	qcom,ext-sense-type;
+};

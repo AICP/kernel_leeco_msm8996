@@ -50,3 +50,7 @@ qcom,letv_zl1_lishen_4000mah {
 	];
 };
 
+&pmi8994_fg {
+	qcom,battery-data = <&mtp_batterydata>;
+	qcom,ext-sense-type;
+};
