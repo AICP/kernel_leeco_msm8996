@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3b9962ae_341defeb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1375
+      },
+      "writtenOn": "2020-09-10T06:31:08Z",
+      "side": 1,
+      "message": "maybe change this to common style and add more info",
+      "revId": "752fbf0c9f4baf82c0538d7f2b09a9f91392be3a",
+      "serverId": "9f904cbb-a964-4fab-a7dc-5cfc4d5c238b",
+      "unresolved": true
+    }
+  ]
+}
