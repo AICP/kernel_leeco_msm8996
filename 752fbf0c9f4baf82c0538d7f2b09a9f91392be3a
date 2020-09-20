@@ -16,6 +16,24 @@
       "revId": "752fbf0c9f4baf82c0538d7f2b09a9f91392be3a",
       "serverId": "9f904cbb-a964-4fab-a7dc-5cfc4d5c238b",
       "unresolved": true
+    },
+    {
+      "key": {
+        "uuid": "463d1e8a_080e89e5",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1788
+      },
+      "writtenOn": "2020-09-20T16:12:43Z",
+      "side": 1,
+      "message": "Don\u0027t know what to put because don\u0027t know what does this wakelock. Only can say that I use since sep 10 with no problems related with that wakelock and I use BT a lot..",
+      "parentUuid": "3b9962ae_341defeb",
+      "revId": "752fbf0c9f4baf82c0538d7f2b09a9f91392be3a",
+      "serverId": "9f904cbb-a964-4fab-a7dc-5cfc4d5c238b",
+      "unresolved": false
     }
   ]
 }
