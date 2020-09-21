@@ -174,8 +174,8 @@ static inline void spin_lock_prefetch(const void *x)
 
 #endif
 
-void cpu_enable_pan(void *__unused);
-void cpu_enable_uao(void *__unused);
+int cpu_enable_pan(void *__unused);
+int cpu_enable_uao(void *__unused);
 
 #include <asm-generic/processor.h>
 
