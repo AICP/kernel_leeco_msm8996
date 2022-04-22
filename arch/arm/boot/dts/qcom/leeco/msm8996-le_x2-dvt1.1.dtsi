@@ -103,6 +103,11 @@
 		qcom,wsa-devs = <0>;
 		qcom,wsa-aux-dev-prefix = <0>;
 	};
+
+	qcom,captouch {
+		compatible = "qcom,captouch";
+	};
+
 };
 
 &i2c_6 {
