@@ -132,6 +132,9 @@
 #define ESD_TIME_MS		2000
 #endif
 
+void (*captouch_key_report_ptr)(int key_status) = NULL;
+bool (*captouch_get_status_ptr)(void) = NULL;
+
 static unsigned char do_once = 1;
 static bool current_status[MAX_NUMBER_OF_BUTTONS];
 #ifdef NO_0D_WHILE_2D

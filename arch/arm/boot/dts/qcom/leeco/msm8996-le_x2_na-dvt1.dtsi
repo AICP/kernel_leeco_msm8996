@@ -311,6 +311,11 @@
 		clocks = <&clock_gcc clk_gcc_blsp2_uart6_apps_clk>,
 		 <&clock_gcc clk_gcc_blsp2_ahb_clk>;
         };
+
+	qcom,captouch {
+		compatible = "qcom,captouch";
+	};
+
 };
 
 &blsp2_uart6 {
